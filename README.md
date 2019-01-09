@@ -1,4 +1,4 @@
-# SWEFinalProject
+# SWE Final Project
 A Company Security Analyzer System 
 
 
