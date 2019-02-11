@@ -5,7 +5,7 @@ Most companies don’t realize that they are being actively analyzed by their pu
 
 While the BitSight rating does a good job indicating overall security hygiene there are a number of factors that are not taken into account.  Cybriant would like to build a system which will analyze these additional factors to determine a more comprehensive analysis of their risk profile.  The risk profile will then be shared with the companies being analyzed to aid in their remediation efforts.
 
-Django Framework:
+# [Django Framework:](https://www.djangoproject.com/)
 
 Django is a high-level Python Web framework that encourages rapid development and clean, pragmatic design. Thanks for checking it out.
 
