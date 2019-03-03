@@ -9,7 +9,7 @@ class Person(StructuredNode):
     # traverse outgoing IS_FROM relations, inflate to Country objects
 
 def home(request):
-    # this will create a new jim everytime you login 
+    # this will create a new jim everytime you login
     jim = Person(name='Jim', age=3).save()
     jim.save() # validation happens here
     return render(request, 'verso/login.html')
@@ -17,4 +17,7 @@ def home(request):
 
 def index(request):
     return render(request, 'verso/index.html', {'title': 'Welcome'})
+
+def customerReg(request):
+    return render(request, 'verso/customerReg.html')
 # Create your views here.
