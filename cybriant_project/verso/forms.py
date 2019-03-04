@@ -11,6 +11,7 @@ class customerRegistration(forms.Form):
     Sub_Company = forms.CharField(
         label = "Enter Sub Company Name",
         max_length = 80,
+        required = False,
     )
 
     Contact_Person = forms.CharField(
@@ -32,7 +33,7 @@ class customerRegistration(forms.Form):
     )
 
     Amazon_s3 = forms.CharField(
-        label = "Place Holder",
+        label = "Enter Amazon s3 Container Address",
         max_length = 80,
-        required = True,
+        required = False,
     )
