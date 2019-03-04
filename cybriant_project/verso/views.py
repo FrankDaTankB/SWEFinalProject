@@ -30,4 +30,7 @@ def customerReg(request):
     else:
         form = customerRegistration()
     return render(request, 'verso/customerReg.html', {'form': form})
+
+def searchCustomer(request):
+    return render(request, 'verso/searchCustomer.html')
 # Create your views here.
