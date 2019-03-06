@@ -14,7 +14,7 @@ class customerRegistration(forms.Form):
         required = False,
     )
 
-    point_of_Person = forms.IntegerField(
+    point_of_Contact = forms.CharField(
         label = "Enter Point of Contact Person",
         max_length = 80,
         required = True,
@@ -22,7 +22,7 @@ class customerRegistration(forms.Form):
 
     PhoneNumber = forms.CharField(
         label = "Enter Phone Number",
-        max_length = 80,
+        max_length = 10,
         required = True,
     )
 
@@ -33,7 +33,7 @@ class customerRegistration(forms.Form):
     )
 
     DomainName = forms.CharField(
-        label = "Enter Domain Namer",
+        label = "Enter Domain Name",
         max_length = 80,
         required = True,
     )

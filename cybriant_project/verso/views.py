@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import customerRegistration
 
-from neomodel import db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo
+from neomodel import config, db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, Relationship, RelationshipFrom
 
 # Put classes for neo4j here
 class Customer(StructuredNode):
@@ -11,7 +11,7 @@ class Customer(StructuredNode):
     companyName = StringProperty(unique_index=True)
     subCompany = StringProperty(unique_index=True)
     Point_of_Contact = StringProperty(unique_index=True)
-    phoneNumber = IntegerProperty(index=True, default=0)
+    phoneNumber = StringProperty(index=True, default=0)
     email = StringProperty(unique_index=True)
     domain2cust = RelationshipTo('domainName', 'customerDomain')
     ip2cust = RelationshipTo('ipAddress', 'customerIP')
@@ -40,10 +40,18 @@ def customerReg(request):
     if request.method == 'POST':
         form = customerRegistration(request.POST)
         if form.is_valid():
-            newCustomer = Customer(companyName = 'CompanyName', subCompany = 'SubCompany', Point_of_Contact = 'point_of_Contact', phoneNumber = 'PhoneNumber', email = 'Email').save()
-            newDomain = domainName(domainName = 'DomainName').save()
-            newIP = ipAddress(ipAddress = 'IpAddress').save()
-            newAmazonS3 = amazonS3(amazonS3 = 'AmazonS3').save()
+            cust_data = request.POST.dict()
+            newCustomer = Customer(companyName = cust_data.get("CompanyName"),
+            subCompany = cust_data.get("SubCompany"),
+            Point_of_Contact = cust_data.get("point_of_Contact"),
+            phoneNumber = cust_data.get("PhoneNumber"),
+            email = cust_data.get("Email")).save()
+            newDomain = domainName(domainName = cust_data.get("DomainName")).save()
+            newIP = ipAddress(ipAddress = cust_data.get("IpAddress")).save()
+            newAmazonS3 = amazonS3(amazonS3 = cust_data.get("AmazonS3")).save()
+            d2crel = newCustomer.domain2cust.connect(newDomain)
+            ip2custrel = newCustomer.ip2cust.connect(newIP)
+            ama2custrel = newCustomer.amazon2cust.connect(newAmazonS3)
             messages.success(request, f'Customer has been added!')
             return redirect('verso-index')
     else:
