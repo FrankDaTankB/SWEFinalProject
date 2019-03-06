@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 from neomodel import config
-config.DATABASE_URL = 'bolt://neo4j:cybriant@localhost:7687'  # 'f' is my neo4j password. replace 'f' with your p neo4j password
-NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:cybriant@localhost:7687')
+config.DATABASE_URL = 'bolt://neo4j:f@localhost:7687'  # 'f' is my neo4j password. replace 'f' with your p neo4j password
+NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:f@localhost:7687')
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
