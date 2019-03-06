@@ -2,37 +2,49 @@ from django import forms
 
 
 class customerRegistration(forms.Form):
-    Company_Name = forms.CharField(
+    CompanyName = forms.CharField(
         label = "Enter the Company Name",
         max_length = 80,
         required = True,
     )
 
-    Sub_Company = forms.CharField(
+    SubCompany = forms.CharField(
         label = "Enter Sub Company Name",
         max_length = 80,
         required = False,
     )
 
-    Contact_Person = forms.CharField(
+    point_of_Person = forms.IntegerField(
         label = "Enter Point of Contact Person",
         max_length = 80,
         required = True,
     )
 
-    DomainName = forms.CharField(
-        label = "Enter Domain Name",
+    PhoneNumber = forms.CharField(
+        label = "Enter Phone Number",
         max_length = 80,
         required = True,
     )
 
-    IP_Range = forms.CharField(
-        label = "Enter the IP Range",
-        max_length = 20,
+    Email = forms.CharField(
+        label = "Enter Email Address",
+        max_length = 80,
         required = True,
     )
 
-    Amazon_s3 = forms.CharField(
+    DomainName = forms.CharField(
+        label = "Enter Domain Namer",
+        max_length = 80,
+        required = True,
+    )
+
+    IpAddress = forms.CharField(
+        label = "Enter the IP Address",
+        max_length = 80,
+        required = True,
+    )
+
+    AmazonS3 = forms.CharField(
         label = "Enter Amazon s3 Container Address",
         max_length = 80,
         required = False,
