@@ -52,7 +52,7 @@ def customerReg(request):
             d2crel = newCustomer.domain2cust.connect(newDomain)
             ip2custrel = newCustomer.ip2cust.connect(newIP)
             ama2custrel = newCustomer.amazon2cust.connect(newAmazonS3)
-            messages.success(request, f'Customer has been added!')
+            messages.success(request, 'Customer has been added!')
             return redirect('verso-index')
     else:
         form = customerRegistration()
