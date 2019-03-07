@@ -92,8 +92,8 @@ def customerReg(request):
             topDomainList =[]
             tldDomain =''
 
-            config.DATABASE_URL = 'bolt://neo4j:f@localhost:7687'  # 'f' is my neo4j password. replace 'f' with your p neo4j password
-            NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:f@localhost:7687')
+            config.DATABASE_URL = 'bolt://neo4j:cybriant@localhost:7687'  # 'f' is my neo4j password. replace 'f' with your p neo4j password
+            NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:cybriant@localhost:7687')
 
 
 
