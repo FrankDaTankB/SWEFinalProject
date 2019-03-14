@@ -1,20 +1,17 @@
-import dns.resolver #import the module
-import checkdmarc
-domain_For_Search= ""
+import dns.resolver
 
 
+domain_for_search= ""
+count=0
+def FindSPF(domain_for_search, count):
+
+      answer=dns.resolver.query(domain_for_search,"TXT")
+      for data in answer:
+
+        if "v=spf1" in data.to_text():
+          print (data)
+          return(1)
 
 
-
-
-
-
-class SPFChecker :
-def Check_SPF2(self, domain_For_Search):
-    myResolver = dns.resolver.Resolver() #create a new instance named 'myResolver'
-myAnswers = myResolver.query(domain_For_Search, "TXT") #Lookup the 'A' record(s) for google.com
-for rdata in myAnswers: #for each response
-    print (rdata) #print the data
-
-    def Check_SPF_backup (self, domain_For_Search):
-return    search_result=(checkdmarc.get_spf_record(domain, nameservers=None, timeout=6.0))
+#print(FindSPF(domain_for_search,count))            How to call the function
+#This will return the SPF record as well as a 1 for pass, nothing for fail.
