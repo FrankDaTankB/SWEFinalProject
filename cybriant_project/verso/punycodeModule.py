@@ -12,12 +12,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import customerRegistration
 from neomodel import config,db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, RelationshipFrom,Relationship
 
-class checkedWebsites(StructuredNode):
-    uid = UniqueIdProperty()
-    ipAddress = StringProperty(unique_index=True)
-    punycodeChar = StringProperty(unique_index=True)
 
-    similarW = RelationshipTo('customerWebsite','ParentWebsite')
 
 class customerWebsite(StructuredNode):
     #id = UniqueIdProperty()
@@ -28,7 +23,7 @@ def customerReg(request):
         form = customerRegistration(request.POST)
         if form.is_valid():
             cust_data = request.POST.dict()
-            domainChecked = 'broodgle.com'#cust_data.get("DomainName")
+            domainChecked = cust_data.get("DomainName")
             return redirect('verso-index')
     else:
         form = customerRegistration()
@@ -81,8 +76,7 @@ def runPuny(domainInput):
     topDomainList =[]
     tldDomain =''
 
-    config.DATABASE_URL = 'bolt://neo4j:f@localhost:7687'  # 'f' is my neo4j password. replace 'f' with your p neo4j password
-    NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:f@localhost:7687')
+
 
 
 
@@ -118,9 +112,9 @@ def runPuny(domainInput):
     #charList.append(['z','Ζ|Ꮓ|Ｚ|ｚ'])
 
     mainDomain=tmpDomainSplit[0]+'.'+tmpDomainSplit[1]
-    mainWebsite = customerWebsite(webAddress=mainDomain).save()
-    mainWebsite.save()
-
+    #mainWebsite = customerWebsite(webAddress=mainDomain).save()
+    #mainWebsite.save()
+    nodeList = []
     mutateList=[]
     tmpResultList=[]
     if len(tmpDomainSplit)==2:
@@ -131,7 +125,6 @@ def runPuny(domainInput):
         tldDomain=tmpDomainSplit[1]
         wordList=[]
         wordList.append(tmpDomainSplit[0])
-
         for char in charList:
             if "|" not in char[1]:
                 list1=list(filler(wordList[0], char[0],char[1]))
@@ -160,12 +153,13 @@ def runPuny(domainInput):
                                 x = x.encode("idna")
                                 ip=getIPHostname(x+str.encode("."+tldDomain))
                                 if ip!=None:
-                                    ipNode = checkedWebsites(ipAddress=ip,punycodeChar='f').save()
-                                    ipNode.save()
-                                    rel = ipNode.similarW.connect(mainWebsite)
+                                    #ipNode = checkedWebsites(ipAddress=ip,punycodeChar='f').save()
+                                    nodeList.append(ip)
+                                    #rel = ipNode.similarW.connect(mainWebsite)
 
                                     x = str(x)
                                     print((x+"."+tldDomain+"\t"+x+"."+tldDomain+" ["+ip+"]"))
                                 else:
                                     x = str(x)
                                     print(( x+"."+tldDomain+"\t"+x+"."+tldDomain+" [Not Registered]"))
+    return nodeList
