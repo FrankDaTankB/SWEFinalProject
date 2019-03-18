@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import customerRegistration
+from verso.punycode import runPuny
+from neomodel import config,db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, RelationshipFrom,Relationship
 
-from neomodel import config, db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, Relationship, RelationshipFrom
 
 # Put classes for neo4j here
 class Customer(StructuredNode):
@@ -20,6 +21,7 @@ class Customer(StructuredNode):
 class domainName(StructuredNode):
     uid = UniqueIdProperty()
     domainName = StringProperty(unique_index=True)
+    fakeIP = RelationshipFrom('checkedWebsites','ParentWebsite')
 
 class ipAddress(StructuredNode):
     uid = UniqueIdProperty()
@@ -28,6 +30,13 @@ class ipAddress(StructuredNode):
 class amazonS3(StructuredNode):
     uid = UniqueIdProperty()
     amazonS3 = StringProperty(unique_index=True)
+
+class checkedWebsites(StructuredNode):
+    uid = UniqueIdProperty()
+    ipAddress = StringProperty(unique_index=True)
+    punycodeChar = StringProperty(unique_index=True)
+
+    parentRel = RelationshipTo('domainName','ParentWebsite')
 
 # Views here
 def home(request):
@@ -53,6 +62,12 @@ def customerReg(request):
             ip2custrel = newCustomer.ip2cust.connect(newIP)
             ama2custrel = newCustomer.amazon2cust.connect(newAmazonS3)
             messages.success(request, 'Customer has been added!')
+            punyOutPut = runPuny(cust_data.get("DomainName"))
+            for punyIP in punyOutPut:
+                newNode = checkedWebsites(ipAddress=punyIP,punycodeChar='f').save()
+                rel = newNode.parentRel.connect(newDomain)
+            #newDomain = domainName(domainName = punyoutput).save()
+
             return redirect('verso-index')
     else:
         form = customerRegistration()
