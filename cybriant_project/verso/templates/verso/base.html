@@ -17,7 +17,7 @@
   <!-- Custom styles for this template-->
   <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
   <link rel="shortcut icon" type="image/x-icon" href="{% static 'media/logos/1551581161.ico' %}">
-
+  {% block css %}{% endblock css %}
 </head>
 
 <body id="page-top">
@@ -61,9 +61,9 @@
       </li>
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'verso-searchCustomer' %}">
+        <a class="nav-link" href="{% url 'verso-viewCustomer' %}">
           <i class="fas fa-search"></i>
-          <span>Search Customers</span>
+          <span>View Customers</span>
         </a>
       </li>
       <!-- Divider -->
@@ -229,7 +229,7 @@
 
   <!-- Custom scripts for all pages-->
   <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
-
+  {% block js %}{% endblock js %}
 </body>
 
 </html>
