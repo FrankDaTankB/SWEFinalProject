@@ -32,8 +32,7 @@ def customerReg(request):
 def dns_timeout(a,b):
     raise Exception("DNS timeout")
 
-# use socket library to get ip address
-#documentation: https://docs.python.org/2/library/socket.html
+
 def getIPHostname(hostname):
     try:
         return (socket.gethostbyname(hostname)).strip()
@@ -111,20 +110,20 @@ def runPuny(domainInput):
     #charList.append(['y','ʏ|Υ|γ|у|Ү|Ｙ|ｙ'])
     #charList.append(['z','Ζ|Ꮓ|Ｚ|ｚ'])
 
-    mainDomain=tmpDomainSplit[0]+'.'+tmpDomainSplit[1]
+    mainDomain=tmpDomainSplit[0]+'.'+tmpDomainSplit[1]+'.'+tmpDomainSplit[2]
     #mainWebsite = customerWebsite(webAddress=mainDomain).save()
     #mainWebsite.save()
     nodeList = []
     mutateList=[]
     tmpResultList=[]
-    if len(tmpDomainSplit)==2:
+    if len(tmpDomainSplit)==3:
         for char in charList:
-            if char[0] in tmpList[0]:
+            if char[1] in tmpList[1]:
                 mutateList.append(char)
 
-        tldDomain=tmpDomainSplit[1]
+        tldDomain=tmpDomainSplit[2]
         wordList=[]
-        wordList.append(tmpDomainSplit[0])
+        wordList.append(tmpDomainSplit[1])
         for char in charList:
             if "|" not in char[1]:
                 list1=list(filler(wordList[0], char[0],char[1]))
@@ -132,7 +131,7 @@ def runPuny(domainInput):
                     x=str(x)
                     if x not in tmpResultList:
                         tmpResultList.append(x)
-                        if x!=tmpDomainSplit[0]:
+                        if x!=tmpDomainSplit[1]:
                             x = x.encode("idna")
                             ip=getIPHostname(x+str.encode("."+tldDomain))
                             if ip!=None:
@@ -149,7 +148,7 @@ def runPuny(domainInput):
 
                         if x not in tmpResultList:
                             tmpResultList.append(x)
-                            if x!=tmpDomainSplit[0]:
+                            if x!=tmpDomainSplit[1]:
                                 x = x.encode("idna")
                                 ip=getIPHostname(x+str.encode("."+tldDomain))
                                 if ip!=None:

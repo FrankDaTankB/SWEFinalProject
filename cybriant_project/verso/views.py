@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import customerRegistration
 from verso.punycodeModule import runPuny
+from verso.openPortModule import openPort
 from neomodel import config,db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, RelationshipFrom,Relationship
 
 
@@ -23,6 +24,11 @@ class domainName(StructuredNode):
     domainName = StringProperty(unique_index=True)
     fakeIP = RelationshipFrom('checkedWebsites','ParentWebsite')
 
+class module(StructuredNode):
+    uid = UniqueIdProperty
+    moduleName = StringProperty(unique_index=True)
+    parentRel = RelationshipTo('domainName','ParentWebsite')
+
 class ipAddress(StructuredNode):
     uid = UniqueIdProperty()
     ipAddress = StringProperty(unique_index=True)
@@ -35,8 +41,12 @@ class checkedWebsites(StructuredNode):
     uid = UniqueIdProperty()
     ipAddress = StringProperty(unique_index=True)
     punycodeChar = StringProperty(unique_index=True)
+    parentRel = RelationshipTo('module','punyCode Parent')
 
-    parentRel = RelationshipTo('domainName','ParentWebsite')
+class OpenedPorts(StructuredNode):
+    uid = UniqueIdProperty()
+    port = StringProperty(unique_index=True)
+    parentRel = RelationshipTo('module','OpenPort Parent')
 
 # Views here
 def home(request):
@@ -62,10 +72,19 @@ def customerReg(request):
             ip2custrel = newCustomer.ip2cust.connect(newIP)
             ama2custrel = newCustomer.amazon2cust.connect(newAmazonS3)
             messages.success(request, f'Customer has been added!')
+            punyNode = module(moduleName="punyCode Module").save()
+            openPortNode = module(moduleName="Open Port Module").save()
+            rel = punyNode.parentRel.connect(newDomain)
+            rel = openPortNode.parentRel.connect(newDomain)
             punyOutPut = runPuny(cust_data.get("DomainName"))
             for punyIP in punyOutPut:
-                newNode = checkedWebsites(ipAddress=punyIP,punycodeChar='f').save()
-                rel = newNode.parentRel.connect(newDomain)
+                 newNode = checkedWebsites(ipAddress=punyIP,punycodeChar='f').save()
+                 rel = newNode.parentRel.connect(punyNode)
+            # checkPorts = openPort("www.d2l.com")
+            # for ports in checkPorts:
+            #      newNode = OpenedPorts(port=ports).save()
+            #      rel = newNode.parentRel.connect(openPortNode)
+
             #newDomain = domainName(domainName = punyoutput).save()
 
             return redirect('verso-index')
