@@ -8,14 +8,15 @@ bls = ["zen.spamhaus.org","cbl.abuseat.org", "virbl.dnsbl.bit.nl", "dnsbl.inps.d
 
 
 
-myIP = "144.76.252.9"
+myIP = ""
 
-for bl in bls:
-    try:
-        my_resolver = dns.resolver.Resolver()
-        query = '.'.join(reversed(str(myIP).split("."))) + "." + bl
-        answers = my_resolver.query(query, "A")
-        answer_txt = my_resolver.query(query, "TXT")
-        print ('IP: %s IS listed in %s (%s: %s)' %(myIP, bl, answers[0], answer_txt[0]))
-    except dns.resolver.NXDOMAIN:
-        print ('IP: %s is NOT listed in %s' %(myIP, bl))
+def check_black_lists(myIP):
+    for bl in bls:
+        try:
+            my_resolver = dns.resolver.Resolver()
+            query = '.'.join(reversed(str(myIP).split("."))) + "." + bl
+            answers = my_resolver.query(query, "A")
+            answer_txt = my_resolver.query(query, "TXT")
+            print ('IP: %s IS listed in %s (%s: %s)' %(myIP, bl, answers[0], answer_txt[0]))
+        except dns.resolver.NXDOMAIN:
+            print ('IP: %s is NOT listed in %s' %(myIP, bl))
