@@ -32,7 +32,8 @@ def customerReg(request):
 def dns_timeout(a,b):
     raise Exception("DNS timeout")
 
-
+# use socket library to get ip address
+#documentation: https://docs.python.org/2/library/socket.html
 def getIPHostname(hostname):
     try:
         return (socket.gethostbyname(hostname)).strip()
@@ -105,25 +106,25 @@ def runPuny(domainInput):
     charList.append(['t','Τ|τ|Т|Ꭲ|Ｔ|ｔ'])
     charList.append(['u','μ|υ|Ա|Ս|⋃|Ｕ|ｕ'])
     charList.append(['v','ν|Ѵ|ѵ|Ꮩ|Ⅴ|ⅴ|Ｖ|ｖ'])
-    charList.append(['w','ѡ|Ꮃ|Ｗ|ｗ'])
-    charList.append(['x','Χ|χ|Х|х|Ⅹ|ⅹ|Ｘ|ｘ'])
-    charList.append(['y','ʏ|Υ|γ|у|Ү|Ｙ|ｙ'])
-    charList.append(['z','Ζ|Ꮓ|Ｚ|ｚ'])
+    #charList.append(['w','ѡ|Ꮃ|Ｗ|ｗ'])
+    #charList.append(['x','Χ|χ|Х|х|Ⅹ|ⅹ|Ｘ|ｘ'])
+    #charList.append(['y','ʏ|Υ|γ|у|Ү|Ｙ|ｙ'])
+    #charList.append(['z','Ζ|Ꮓ|Ｚ|ｚ'])
 
-    mainDomain=tmpDomainSplit[0]+'.'+tmpDomainSplit[1]+'.'+tmpDomainSplit[2]
+    mainDomain=tmpDomainSplit[0]+'.'+tmpDomainSplit[1]
     #mainWebsite = customerWebsite(webAddress=mainDomain).save()
     #mainWebsite.save()
     nodeList = []
     mutateList=[]
     tmpResultList=[]
-    if len(tmpDomainSplit)==3:
+    if len(tmpDomainSplit)==2:
         for char in charList:
-            if char[1] in tmpList[1]:
+            if char[0] in tmpList[0]:
                 mutateList.append(char)
 
-        tldDomain=tmpDomainSplit[2]
+        tldDomain=tmpDomainSplit[1]
         wordList=[]
-        wordList.append(tmpDomainSplit[1])
+        wordList.append(tmpDomainSplit[0])
         for char in charList:
             if "|" not in char[1]:
                 list1=list(filler(wordList[0], char[0],char[1]))
@@ -131,7 +132,7 @@ def runPuny(domainInput):
                     x=str(x)
                     if x not in tmpResultList:
                         tmpResultList.append(x)
-                        if x!=tmpDomainSplit[1]:
+                        if x!=tmpDomainSplit[0]:
                             x = x.encode("idna")
                             ip=getIPHostname(x+str.encode("."+tldDomain))
                             if ip!=None:
@@ -148,20 +149,18 @@ def runPuny(domainInput):
 
                         if x not in tmpResultList:
                             tmpResultList.append(x)
-                            if x!=tmpDomainSplit[1]:
-                                try:
-                                    x = x.encode("idna")
-                                    ip=getIPHostname(x+str.encode("."+tldDomain))
-                                    if ip!=None:
-                                        #ipNode = checkedWebsites(ipAddress=ip,punycodeChar='f').save()
-                                        nodeList.append(ip)
-                                        #rel = ipNode.similarW.connect(mainWebsite)
+                            if x!=tmpDomainSplit[0]:
+                                x = x.encode("idna")
+                                ip=getIPHostname(x+str.encode("."+tldDomain))
+                                if ip!=None:
+                                    #ipNode = checkedWebsites(ipAddress=ip,punycodeChar='f').save()
+                                    nodeList.append(ip)
+                                    #rel = ipNode.similarW.connect(mainWebsite)
 
-                                        x = str(x)
-                                        print((x+"."+tldDomain+"\t"+x+"."+tldDomain+" ["+ip+"]"))
-                                    else:
-                                        x = str(x)
-                                        print(( x+"."+tldDomain+"\t"+x+"."+tldDomain+" [Not Registered]"))
-                                except:
-                                        print("error")
+                                    x = str(x)
+                                    print((x+"."+tldDomain+"\t"+x+"."+tldDomain+" ["+ip+"]"))
+                                else:
+                                    x = str(x)
+                                    print(( x+"."+tldDomain+"\t"+x+"."+tldDomain+" [Not Registered]"))
+
     return nodeList

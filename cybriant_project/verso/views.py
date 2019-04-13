@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import customerRegistration
 from verso.punycodeModule import runPuny
 from verso.openPortModule import openPort
+from verso.SPF import FindSPF
+#from verso.dmarc import DMARCFound
 from neomodel import config,db, clear_neo4j_database, StructuredNode, UniqueIdProperty, StringProperty, IntegerProperty, RelationshipTo, RelationshipFrom,Relationship
 
 
@@ -48,6 +50,16 @@ class OpenedPorts(StructuredNode):
     port = StringProperty(unique_index=True)
     parentRel = RelationshipTo('module','OpenPort Parent')
 
+class SPF(StructuredNode):
+    uid = UniqueIdProperty()
+    record = StringProperty(unique_index=True)
+    parentRel = RelationshipTo('module','SPF Parent')
+
+class DMARC(StructuredNode):
+    uid = UniqueIdProperty()
+    record = StringProperty(unique_index = True)
+    parentRel = Relationship('module', 'DMARC Parent')
+
 # Views here
 def home(request):
     return render(request, 'verso/login.html')
@@ -72,20 +84,33 @@ def customerReg(request):
             ip2custrel = newCustomer.ip2cust.connect(newIP)
             ama2custrel = newCustomer.amazon2cust.connect(newAmazonS3)
             messages.success(request, f'Customer has been added!')
+
             punyNode = module(moduleName="punyCode Module").save()
-            openPortNode = module(moduleName="Open Port Module").save()
+            # openPortNode = module(moduleName="Open Port Module").save()
+            # spfNode = module(moduleName="SPF Module").save()
+        #    dmarcNode = module(moduleName="DMARC Module").save()
+
             rel = punyNode.parentRel.connect(newDomain)
-            rel = openPortNode.parentRel.connect(newDomain)
+            # rel = openPortNode.parentRel.connect(newDomain)
+            # rel = spfNode.parentRel.connect(newDomain)
+        #    rel = dmarcNode.parentRel.connect(newDomain)
+
             punyOutPut = runPuny(cust_data.get("DomainName"))
             for punyIP in punyOutPut:
                  newNode = checkedWebsites(ipAddress=punyIP,punycodeChar='f').save()
                  rel = newNode.parentRel.connect(punyNode)
-            # checkPorts = openPort("www.d2l.com")
+
+            # checkPorts = openPort(cust_data.get("DomainName"))
             # for ports in checkPorts:
             #      newNode = OpenedPorts(port=ports).save()
             #      rel = newNode.parentRel.connect(openPortNode)
+            # spfRecord = FindSPF(cust_data.get("DomainName"))
+            # newNode = SPF(record = spfRecord).save()
+            # rel = newNode.parentRel.connect(spfNode)
 
-            #newDomain = domainName(domainName = punyoutput).save()
+        #    dmarcRecord = DMARCFound(cust_data.get("DomainName"))
+        #    newNode = DMARC(record = dmarcRecord).save()
+            #rel = newNode.parentRel.connect(dmarcNode)
 
             return redirect('verso-index')
     else:
