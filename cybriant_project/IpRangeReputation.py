@@ -9,8 +9,10 @@ bls = ["zen.spamhaus.org","cbl.abuseat.org", "virbl.dnsbl.bit.nl", "dnsbl.inps.d
 
 
 myIP = ""
+
 #0.0.0.0-255.255.255.255
 def check_black_lists(myIP):
+    count=0
     for bl in bls:
         try:
             my_resolver = dns.resolver.Resolver()
@@ -18,17 +20,23 @@ def check_black_lists(myIP):
             answers = my_resolver.query(query, "A")
             answer_txt = my_resolver.query(query, "TXT")
             print ('IP: %s IS listed in %s (%s: %s)' %(myIP, bl, answers[0], answer_txt[0]))
+            count+=1
         except dns.resolver.NXDOMAIN:
             print ('IP: %s is NOT listed in %s' %(myIP, bl))
+    return(count)
 def check_Ip_Range(ipA, ipB, ipC):
+    count=0
     for x in range(ipB, ipC):
-        check_black_lists(ipA+str(x))
+        count+=check_black_lists(ipA+str(x))
+    return(count)
 
 
-
+#myIP="4.4.4.12"
+#check_black_lists(myIP)
 #example of how to call the range version of the Lookup
 #An ip has 4 sections, provide the first three as the first input, then the lower 4th section, then the higher 4th section.
 #check_Ip_Range("4.4.4.",12,15)
+
 #output will look like this
 #IP: 4.4.4.12 IS listed in zen.spamhaus.org (127.0.0.11: "https://www.spamhaus.org/query/ip/4.4.4.12")
 #IP: 4.4.4.12 is NOT listed in cbl.abuseat.org
